@@ -76,3 +76,5 @@ plt.ylabel('Inertial Frame (Y-Axis)')
 plt.title('Bicycle Model with Linear Tires')
 plt.plot(rigid_body[0,:],rigid_body[1,:], rigid_body[0,2], rigid_body[1,2], 's')
 plt.show()
+
+print('done')
