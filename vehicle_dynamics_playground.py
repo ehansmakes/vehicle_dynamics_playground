@@ -14,7 +14,7 @@ fig, ax = plt.subplots()            # Create a figure containing a single Axes.
 # GENERAL PARAMETERS -----------------------------------------------------------------
 
 yaw_angle = np.deg2rad(40)      #radians; denoted as uppercase_psi
-steer_angle = np.deg2rad(25)    #radians; denoted as lowercase_delta
+steer_angle = np.deg2rad(10)    #radians; denoted as lowercase_delta
 
 
 yaw_rotation_matrix = np.array([[np.cos(yaw_angle), -np.sin(yaw_angle)],
@@ -77,4 +77,4 @@ plt.title('Bicycle Model with Linear Tires')
 plt.plot(rigid_body[0,:],rigid_body[1,:], rigid_body[0,2], rigid_body[1,2], 's')
 plt.show()
 
-print('done')
+fig.savefig('figures/graph.png')
