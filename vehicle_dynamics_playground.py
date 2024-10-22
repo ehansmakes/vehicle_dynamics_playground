@@ -15,6 +15,10 @@ fig, ax = plt.subplots()            # Create a figure containing a single Axes.
 
 yaw_angle = np.deg2rad(40)      #radians; denoted as uppercase_psi
 steer_angle = np.deg2rad(10)    #radians; denoted as lowercase_delta
+vel_long = 3; 
+
+
+# ADD Different Powertrain versions; we are modeling an AWD system 
 
 
 yaw_rotation_matrix = np.array([[np.cos(yaw_angle), -np.sin(yaw_angle)],
