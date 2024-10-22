@@ -4,4 +4,4 @@
 
 Current Models
 Bicycle Model with Linear Tires (Kinematic Model)
-![alt text](image.png)
+![alt text](graph.png)

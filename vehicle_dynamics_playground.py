@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import numpy as np
 
+
 # This is part of a vehicle dynamics library
 # We will start simple with a bicycle model using linear tires
 # Eventually we will add additional models as functions
@@ -13,8 +14,8 @@ fig, ax = plt.subplots()            # Create a figure containing a single Axes.
 
 # GENERAL PARAMETERS -----------------------------------------------------------------
 
-yaw_angle = np.deg2rad(40)      #radians; denoted as uppercase_psi
-steer_angle = np.deg2rad(10)    #radians; denoted as lowercase_delta
+yaw_angle = np.deg2rad(0)      #radians; denoted as uppercase_psi
+steer_angle = np.deg2rad(25)    #radians; denoted as lowercase_delta
 vel_long = 3; 
 
 
@@ -50,7 +51,6 @@ tire_coordinates = rigid_body[:, 0:2] - 0.5*np.array([[tire_dia,tire_dia],
                                                       [section_width,section_width]])
 
 # Front Tire Model
-
 tire_front = Rectangle(tire_coordinates[:,1], 
                       width = tire_dia,
                       height = section_width,
@@ -60,7 +60,6 @@ tire_front = Rectangle(tire_coordinates[:,1],
                       alpha = 0.5)
 
 # Rear Tire Model
-
 tire_rear = Rectangle(tire_coordinates[:,0],
                       width = tire_dia,
                       height = section_width,
@@ -75,10 +74,15 @@ plt.axis((-L*0.25, L*1.25, -L*0.25, L*1.25))          # Plot Rigid Body
 ax.add_patch(tire_front)                                # Plot the Front Tire Model
 ax.add_patch(tire_rear)                                 # Plot the Rear Tire Model
 
+ax.add_patch
+
 plt.xlabel('Inertial Frame (X-Axis)')
 plt.ylabel('Inertial Frame (Y-Axis)')
 plt.title('Bicycle Model with Linear Tires')
 plt.plot(rigid_body[0,:],rigid_body[1,:], rigid_body[0,2], rigid_body[1,2], 's')
-plt.show()
 
-fig.savefig('figures/graph.png')
+x_new = [2, 3, 4, 5]
+y_new = [2, 5, 10, 17]
+plt.plot(x_new, y_new)
+
+plt.show()
