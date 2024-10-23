@@ -6,7 +6,15 @@ import numpy as np
 # This script provides a general overview of the Kinematic Bicycle Model 
 # This model is a great starting point, but provides a rough estimation 
 
-# GLOBAL SETTINGS FOR PLOTS ----------------------------------------------------------
+# REFERENCE LIST ------------------------------------------------------------------
+# HowDynamic, Lec 03 | Vehicle Dynamics | Kinematic Bicycle (part 2 - derivation)
+# (https://youtu.be/I9Myqu6GgAQ?si=7OBfDNqUK1y3qdxy)
+# HowDynamic, Lec 02 Vehicle Dynamics | Kinematic Bicycle Model (Part 1)
+# (https://youtu.be/d4WW-Fcm4_k?si=mf04h-CnUQ3IAK1M)
+# Prof. Georg Schildbach, University of Luebeck, Vehicle Dynamics & Control - 05 Kinematic bicycle model
+# (https://www.youtube.com/watch?v=HqNdBiej23I)
+
+# GLOBAL SETTINGS FOR PLOTS --------------------------------------------------------
 print_out = True                    # Prints out values from EOM (Inertial Frame)
 reference_lines = True              # Turn refence line on (True) or off (False)
 
