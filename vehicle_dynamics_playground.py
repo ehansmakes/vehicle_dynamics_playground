@@ -14,8 +14,9 @@ fig, ax = plt.subplots()            # Create a figure containing a single Axes.
 
 # GENERAL PARAMETERS -----------------------------------------------------------------
 
-yaw_angle = np.deg2rad(5)      #radians; denoted as uppercase_psi
-steer_angle = np.deg2rad(60)    #radians; denoted as lowercase_delta
+yaw_angle = np.deg2rad(5)    #radians; denoted as uppercase_psi
+steer_angle = np.deg2rad(60) #radians; denoted as lowercase_delta
+vehicle_vel = 5              #speed in [m/s]
 
 
 # VEHICLE MODEL PARAMETERS (Bicycle) --------------------------------------------------
@@ -55,6 +56,7 @@ yaw_rotation_matrix = np.array([[np.cos(yaw_angle), -np.sin(yaw_angle)],
                                 [np.sin(yaw_angle), np.cos(yaw_angle)]])
 
 rigid_body = np.matmul(yaw_rotation_matrix,rigid_body)      # This rotates the rigid body coordinates by the yaw angle
+vel_matrix = np.matmul(yaw_rotation_matrix,vel_matrix)
 
 # TIRE MODEL PARAMETERS (Linear) -------------------------------------------------------
 
@@ -89,7 +91,20 @@ tire_rear = Rectangle(tire_coordinates[:,0],
 # VARIABLE CHECK ----------------------------------------------------------------
 print()
 print("------------------------")
-print(rigid_body[0,1])
+print(rigid_body)
+
+# Radias of Curvature 
+# Radius of Curvature of Rear Axle 
+
+# Velocity at CoM 
+# Body Slip Angle (body_slip_angle)
+OA = [rigid_body[0,0]-rigid_body[0,3],rigid_body[1,0]-rigid_body[1,3]]
+OC = [rigid_body[0,2]-rigid_body[0,3],rigid_body[1,2]-rigid_body[1,3]]
+
+body_slip_angle = np.arccos(np.dot(OA,OC)/(np.linalg.norm(OA)*np.linalg.norm(OC)))
+
+print(np.rad2deg(body_slip_angle))
+
 
 # VEHICLE MODEL PLOT -------------------------------------------------------------
 reference_lines = True                                  # Turn refence line on (True) or off (False)
@@ -119,7 +134,7 @@ if reference_lines:
     plt.plot([rigid_body[0,1], rigid_body[0,3]], [rigid_body[1,1], rigid_body[1,3]],"r--")
 
     plt.plot([rigid_body[0,2], rigid_body[0,3]], [rigid_body[1,2], rigid_body[1,3]],"y--")
-    plt.arrow(rigid_body[0,2], rigid_body[1,2], 20, 20, 
+    plt.arrow(vel_matrix[0,4], vel_matrix[1,4], 20, 20, 
           head_width = 5,
           width = 1.5,
           ec ='yellow')
