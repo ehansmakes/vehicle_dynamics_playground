@@ -14,27 +14,45 @@ fig, ax = plt.subplots()            # Create a figure containing a single Axes.
 
 # GENERAL PARAMETERS -----------------------------------------------------------------
 
-yaw_angle = np.deg2rad(0)      #radians; denoted as uppercase_psi
-steer_angle = np.deg2rad(25)    #radians; denoted as lowercase_delta
-vel_long = 3; 
-
-
-# ADD Different Powertrain versions; we are modeling an AWD system 
-
-
-yaw_rotation_matrix = np.array([[np.cos(yaw_angle), -np.sin(yaw_angle)],
-                                [np.sin(yaw_angle), np.cos(yaw_angle)]])
+yaw_angle = np.deg2rad(5)      #radians; denoted as uppercase_psi
+steer_angle = np.deg2rad(60)    #radians; denoted as lowercase_delta
 
 
 # VEHICLE MODEL PARAMETERS (Bicycle) --------------------------------------------------
 
-L = 324   #length between Front and Rear axles (millimeters)
-C = 146.5     #center of mass - in reference to the Rear axle (millimeters)
+L = 324    #length between Front and Rear axles (millimeters)
+C = 146.5  #center of mass - in reference to the Rear axle (millimeters)
 
 ## Rigid Body Cooridinate Setup 
 
-rigid_body = np.array([[0,L,C],
-                       [0,0,0]])                            # Rigid body x,y coordinates for: rear, front, center of gravity (in order)
+# Body Coordinate matrix for: 
+# rear, front, center of gravity and center of rotation (respectively)
+rigid_body = np.array([[0,L,C,0],
+                       [0,0,0,1]])
+
+# Velocity Coordinate matrix for:
+# rear wheel, front wheel, and center of mass velocity
+vel_matrix = np.array([[0,0,L,0,C,0],
+                       [0,0,0,0,0,0]])                          
+
+# SETTING UP CENTER OF ROTATION COORDINATES [In Vehicle Frame] -------------------------
+if steer_angle == 0: 
+    print("   STEERING ANGLE IS ZERO    ")
+    print("-----------------------------")
+    print("NO CENTER OF ROTOTATION FOUND")
+    exit()
+
+elif steer_angle >= np.deg2rad(90) or steer_angle <= np.deg2rad(-90):
+    print("oops")
+    exit()
+
+else:
+    rigid_body[1,3] = L / (np.tan(steer_angle))
+
+# Rotate Coordinates to Set Up Model in Inertial Frame
+
+yaw_rotation_matrix = np.array([[np.cos(yaw_angle), -np.sin(yaw_angle)],
+                                [np.sin(yaw_angle), np.cos(yaw_angle)]])
 
 rigid_body = np.matmul(yaw_rotation_matrix,rigid_body)      # This rotates the rigid body coordinates by the yaw angle
 
@@ -68,21 +86,42 @@ tire_rear = Rectangle(tire_coordinates[:,0],
                       color = 'teal',
                       alpha = 0.5)
 
-# VEHICLE MODEL PLOT -------------------------------------------------------------
+# VARIABLE CHECK ----------------------------------------------------------------
+print()
+print("------------------------")
+print(rigid_body[0,1])
 
-plt.axis((-L*0.25, L*1.25, -L*0.25, L*1.25))          # Plot Rigid Body
+# VEHICLE MODEL PLOT -------------------------------------------------------------
+reference_lines = True                                  # Turn refence line on (True) or off (False)
+
+plt.axis((-C*0.75, C*3, -C*.75, C*3))            # Plot Rigid Body
 ax.add_patch(tire_front)                                # Plot the Front Tire Model
 ax.add_patch(tire_rear)                                 # Plot the Rear Tire Model
 
 ax.add_patch
 
-plt.xlabel('Inertial Frame (X-Axis)')
-plt.ylabel('Inertial Frame (Y-Axis)')
+plt.xlabel('X-Axis Inertial Frame (mm)')
+plt.ylabel('Y-Axis Inertial Frame (mm)')
 plt.title('Bicycle Model with Linear Tires')
-plt.plot(rigid_body[0,:],rigid_body[1,:], rigid_body[0,2], rigid_body[1,2], 's')
 
-x_new = [2, 3, 4, 5]
-y_new = [2, 5, 10, 17]
-plt.plot(x_new, y_new)
+# Plot Rigid Body Model
+plt.plot(rigid_body[0,0:2],rigid_body[1,0:2], "-")
 
+# Plot Center of Gravity 
+plt.plot(rigid_body[0,2], rigid_body[1,2],"o")
+
+# Plot Center of Rotation
+plt.plot(rigid_body[0,3], rigid_body[1,3],"ro")
+
+# Plot Reference Lines
+if reference_lines: 
+    plt.plot([rigid_body[0,0], rigid_body[0,3]], [rigid_body[1,0], rigid_body[1,3]],"r--")
+    plt.plot([rigid_body[0,1], rigid_body[0,3]], [rigid_body[1,1], rigid_body[1,3]],"r--")
+
+    plt.plot([rigid_body[0,2], rigid_body[0,3]], [rigid_body[1,2], rigid_body[1,3]],"y--")
+    plt.arrow(rigid_body[0,2], rigid_body[1,2], 20, 20, 
+          head_width = 5,
+          width = 1.5,
+          ec ='yellow')
+    
 plt.show()
