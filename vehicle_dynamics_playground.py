@@ -3,20 +3,18 @@ from matplotlib.patches import Rectangle
 import numpy as np
 
 
-# This is part of a vehicle dynamics library
-# We will start simple with a bicycle model using linear tires
-# Eventually we will add additional models as functions
+# This script provides a general overview of the Kinematic Bicycle Model 
+# This model is a great starting point, but provides a rough estimation 
 
 # GLOBAL SETTINGS FOR PLOTS ----------------------------------------------------------
-plt.style.use('dark_background')    # Set Plot 𝔸 𝔼 𝕊 𝕋 ℍ 𝔼 𝕋 𝕀 ℂ 𝕊 
-fig, ax = plt.subplots()            # Create a figure containing a single Axes.
+print_out = True                    # Prints out values from EOM (Inertial Frame)
+reference_lines = True              # Turn refence line on (True) or off (False)
 
-
-# GENERAL PARAMETERS -----------------------------------------------------------------
+# STATE PARAMETERS -----------------------------------------------------------------
 
 yaw_angle = np.deg2rad(5)    #radians; denoted as uppercase_psi
 steer_angle = np.deg2rad(60) #radians; denoted as lowercase_delta
-vehicle_vel = 5              #speed in [m/s]
+vehicle_vel = 5              #vehicle speed in (m/s)
 
 
 # VEHICLE MODEL PARAMETERS (Bicycle) --------------------------------------------------
@@ -24,19 +22,16 @@ vehicle_vel = 5              #speed in [m/s]
 L = 324    #length between Front and Rear axles (millimeters)
 C = 146.5  #center of mass - in reference to the Rear axle (millimeters)
 
-## Rigid Body Cooridinate Setup 
+body_slip_angle = np.arctan(C*np.tan(steer_angle)/L)
 
-# Body Coordinate matrix for: 
-# rear, front, center of gravity and center of rotation (respectively)
+# Rigid Body Coordinate matrix for: 
+# rear, front, center of gravity and center of rotation (respectively by column)
 rigid_body = np.array([[0,L,C,0],
-                       [0,0,0,1]])
+                       [0,0,0,1]])                        
 
-# Velocity Coordinate matrix for:
-# rear wheel, front wheel, and center of mass velocity
-vel_matrix = np.array([[0,0,L,0,C,0],
-                       [0,0,0,0,0,0]])                          
 
-# SETTING UP CENTER OF ROTATION COORDINATES [In Vehicle Frame] -------------------------
+# FINDING THE CENTER OF ROTATION COORDINATES [In Vehicle Frame] -----------------------
+
 if steer_angle == 0: 
     print("   STEERING ANGLE IS ZERO    ")
     print("-----------------------------")
@@ -44,28 +39,41 @@ if steer_angle == 0:
     exit()
 
 elif steer_angle >= np.deg2rad(90) or steer_angle <= np.deg2rad(-90):
-    print("oops")
+    print("STEERING ANGLE IS OVER 90 deg")
+    print("-----------------------------")
+    print("NO CENTER OF ROTOTATION FOUND")
     exit()
 
 else:
     rigid_body[1,3] = L / (np.tan(steer_angle))
 
-# Rotate Coordinates to Set Up Model in Inertial Frame
+# Set Up Velocity Coordinate matrix from the Center of Mass --------------------------
+# rear wheel, front wheel, and center of mass velocity
+vel_matrix = np.array([[C,0],
+                       [0,0]])  
+
+vel_matrix[0,1] = vehicle_vel*np.cos(body_slip_angle)
+vel_matrix[1,1] = vehicle_vel*np.sin(body_slip_angle)
+
+
+# ROTATION MATRIX SETUP =--------------------------------------------------------------
 
 yaw_rotation_matrix = np.array([[np.cos(yaw_angle), -np.sin(yaw_angle)],
                                 [np.sin(yaw_angle), np.cos(yaw_angle)]])
 
-rigid_body = np.matmul(yaw_rotation_matrix,rigid_body)      # This rotates the rigid body coordinates by the yaw angle
+# Rotates the rigid body coordinate and velocity matrices using the yaw rotation matrix
+rigid_body = np.matmul(yaw_rotation_matrix,rigid_body)     
 vel_matrix = np.matmul(yaw_rotation_matrix,vel_matrix)
+
 
 # TIRE MODEL PARAMETERS (Linear) -------------------------------------------------------
 
 ## General Parameters
-rim_dia = 60                            # millimeters
-section_height = 22.5                   # millimeters
-section_width = 45                      # millimeters
-tread_width = 45                        # millimeters
-tire_dia = rim_dia + section_height     # millimeters
+rim_dia = 60                            # (millimeters)
+section_height = 22.5                   # (millimeters)
+section_width = 45                      # (millimeters)
+tread_width = 45                        # (millimeters)
+tire_dia = rim_dia + section_height     # (millimeters)
 
 tire_coordinates = rigid_body[:, 0:2] - 0.5*np.array([[tire_dia,tire_dia],
                                                       [section_width,section_width]])
@@ -88,28 +96,28 @@ tire_rear = Rectangle(tire_coordinates[:,0],
                       color = 'teal',
                       alpha = 0.5)
 
-# VARIABLE CHECK ----------------------------------------------------------------
-print()
-print("------------------------")
-print(rigid_body)
 
-# Radias of Curvature 
-# Radius of Curvature of Rear Axle 
+# CALCULATE KINEMATIC BICYCLE MODEL EQUATIONS OF MOTIONS -------------------------
 
-# Velocity at CoM 
-# Body Slip Angle (body_slip_angle)
-OA = [rigid_body[0,0]-rigid_body[0,3],rigid_body[1,0]-rigid_body[1,3]]
-OC = [rigid_body[0,2]-rigid_body[0,3],rigid_body[1,2]-rigid_body[1,3]]
+x_dot = vehicle_vel*np.cos(yaw_angle+body_slip_angle)
+y_dot = vehicle_vel*np.sin(yaw_angle+body_slip_angle)
+yaw_rate = vehicle_vel*np.cos(body_slip_angle)*np.tan(steer_angle)/L
 
-body_slip_angle = np.arccos(np.dot(OA,OC)/(np.linalg.norm(OA)*np.linalg.norm(OC)))
-
-print(np.rad2deg(body_slip_angle))
+if print_out:
+    print("       Equation of Motion Calculations       ")
+    print("---------------------------------------------")
+    print ("Velocity [Inertial Frame x-axis]: ", round(x_dot, 2), "(m/s)")
+    print ("Velocity [Inertial Frame y-axis]: ", round(y_dot, 2), "(m/s)")
+    print ("Yaw Rate: ", round(np.rad2deg(yaw_rate), 2), "(deg)")
+    print("---------------------------------------------")
 
 
 # VEHICLE MODEL PLOT -------------------------------------------------------------
-reference_lines = True                                  # Turn refence line on (True) or off (False)
 
-plt.axis((-C*0.75, C*3, -C*.75, C*3))            # Plot Rigid Body
+plt.style.use('dark_background')    # Set Plot 𝔸 𝔼 𝕊 𝕋 ℍ 𝔼 𝕋 𝕀 ℂ 𝕊 
+fig, ax = plt.subplots()            # Create a figure containing a single axis.
+plt.gca().set_aspect('equal')       # Sets axis equal (this avoids distortion)
+plt.axis("equal")                  # Plot Rigid Body
 ax.add_patch(tire_front)                                # Plot the Front Tire Model
 ax.add_patch(tire_rear)                                 # Plot the Rear Tire Model
 
@@ -129,14 +137,16 @@ plt.plot(rigid_body[0,2], rigid_body[1,2],"o")
 plt.plot(rigid_body[0,3], rigid_body[1,3],"ro")
 
 # Plot Reference Lines
-if reference_lines: 
+if reference_lines:
+    # Plot the radii about the center of rotation at the rear wheel, front wheel and center of mass (respectively)
     plt.plot([rigid_body[0,0], rigid_body[0,3]], [rigid_body[1,0], rigid_body[1,3]],"r--")
     plt.plot([rigid_body[0,1], rigid_body[0,3]], [rigid_body[1,1], rigid_body[1,3]],"r--")
-
     plt.plot([rigid_body[0,2], rigid_body[0,3]], [rigid_body[1,2], rigid_body[1,3]],"y--")
-    plt.arrow(vel_matrix[0,4], vel_matrix[1,4], 20, 20, 
+
+    # Plot the velocity vector about the center of mass (the vector is amplified by 10 for visibility)
+    plt.arrow(vel_matrix[0,0], vel_matrix[1,0], vel_matrix[0,1]*10, vel_matrix[1,1]*10, 
           head_width = 5,
           width = 1.5,
           ec ='yellow')
-    
+
 plt.show()
