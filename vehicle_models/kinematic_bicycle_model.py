@@ -21,7 +21,7 @@ reference_lines = True              # Turn refence line on (True) or off (False)
 # STATE PARAMETERS -----------------------------------------------------------------
 
 yaw_angle = np.deg2rad(5)    #radians; denoted as uppercase_psi
-steer_angle = np.deg2rad(60) #radians; denoted as lowercase_delta
+steer_angle = np.deg2rad(30) #radians; denoted as lowercase_delta
 vehicle_vel = 5              #vehicle speed in (m/s)
 
 
