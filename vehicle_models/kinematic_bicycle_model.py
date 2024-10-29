@@ -6,7 +6,7 @@ import numpy as np
 # This script provides a general overview of the Kinematic Bicycle Model 
 # This model is a great starting point, but provides a rough estimation 
 
-# REFERENCE LIST ------------------------------------------------------------------
+# REFERENCE LIST -----------------------------------------------------------------------
 # HowDynamic, Lec 03 | Vehicle Dynamics | Kinematic Bicycle (part 2 - derivation)
 # (https://youtu.be/I9Myqu6GgAQ?si=7OBfDNqUK1y3qdxy)
 # HowDynamic, Lec 02 Vehicle Dynamics | Kinematic Bicycle Model (Part 1)
@@ -14,18 +14,19 @@ import numpy as np
 # Prof. Georg Schildbach, University of Luebeck, Vehicle Dynamics & Control - 05 Kinematic bicycle model
 # (https://www.youtube.com/watch?v=HqNdBiej23I)
 
-# GLOBAL SETTINGS FOR PLOTS --------------------------------------------------------
+# GLOBAL SETTINGS FOR PLOTS ------------------------------------------------------------
 print_out = True                    # Prints out values from EOM (Inertial Frame)
 reference_lines = True              # Turn refence line on (True) or off (False)
 
-# STATE PARAMETERS -----------------------------------------------------------------
+
+# STATE PARAMETERS ---------------------------------------------------------------------
 
 yaw_angle = np.deg2rad(5)    #radians; denoted as uppercase_psi
-steer_angle = np.deg2rad(30) #radians; denoted as lowercase_delta
+steer_angle = np.deg2rad(15) #radians; denoted as lowercase_delta
 vehicle_vel = 5              #vehicle speed in (m/s)
 
 
-# VEHICLE MODEL PARAMETERS (Bicycle) --------------------------------------------------
+# VEHICLE MODEL PARAMETERS (Bicycle) ---------------------------------------------------
 
 L = 324    #length between Front and Rear axles (millimeters)
 C = 146.5  #center of mass - in reference to the Rear axle (millimeters)
@@ -38,7 +39,7 @@ rigid_body = np.array([[0,L,C,0],
                        [0,0,0,1]])                        
 
 
-# FINDING THE CENTER OF ROTATION COORDINATES [In Vehicle Frame] -----------------------
+# FINDING THE CENTER OF ROTATION COORDINATES [In Vehicle Frame] ------------------------
 
 if steer_angle == 0: 
     print("   STEERING ANGLE IS ZERO    ")
@@ -55,7 +56,8 @@ elif steer_angle >= np.deg2rad(90) or steer_angle <= np.deg2rad(-90):
 else:
     rigid_body[1,3] = L / (np.tan(steer_angle))
 
-# Set Up Velocity Coordinate matrix from the Center of Mass --------------------------
+
+# Set Up Velocity Coordinate matrix from the Center of Mass ----------------------------
 # rear wheel, front wheel, and center of mass velocity
 vel_matrix = np.array([[C,0],
                        [0,0]])  
@@ -105,7 +107,7 @@ tire_rear = Rectangle(tire_coordinates[:,0],
                       alpha = 0.5)
 
 
-# CALCULATE KINEMATIC BICYCLE MODEL EQUATIONS OF MOTIONS -------------------------
+# CALCULATE KINEMATIC BICYCLE MODEL EQUATIONS OF MOTIONS -------------------------------
 
 x_dot = vehicle_vel*np.cos(yaw_angle+body_slip_angle)
 y_dot = vehicle_vel*np.sin(yaw_angle+body_slip_angle)
@@ -120,7 +122,7 @@ if print_out:
     print("---------------------------------------------")
 
 
-# VEHICLE MODEL PLOT -------------------------------------------------------------
+# VEHICLE MODEL PLOT -------------------------------------------------------------------
 
 plt.style.use('dark_background')    # Set Plot 𝔸 𝔼 𝕊 𝕋 ℍ 𝔼 𝕋 𝕀 ℂ 𝕊 
 fig, ax = plt.subplots()            # Create a figure containing a single axis.
