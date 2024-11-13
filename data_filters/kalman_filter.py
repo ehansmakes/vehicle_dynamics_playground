@@ -1,57 +1,12 @@
 import numpy as np
-
-# AUTHOR'S NOTES -----------------------------------------------------------------------
-
-# Design the KF 
-
-# goal: estimate x, v (position and velocity) given measurement z = x + R_k
-
-# x_bar_k = [[x_k],[v_k]]  # The bar suffix indicates the estimate matrix[v_k]]
-
-# z_bar_k = [z_k]    # The bar suffix indicates the measurement matrix 
-
-# TIME EVOLUTION
-# NOTE: t_Step can also be delta_t
-
-# x_k1 = x_k + v_k*t_step + 0.5 * a * t_step^2 
-# v_k1 = v_k + a * t_step 
-
-# Let's get this into matrix form! (Denoted by 'bar')
-
-#                   F                              B
-# x_bar_k1 = [[1, t_step],[0, 1]]*x_bar_k + [[0.5 * t_step^2],[t_step]] * a
-
-# we assume 'a' is constant and a normally distributed random variable with mean = 0 
-
-# MEASUREMENT UPDATE
-# z_k = x_k + R_k 
-#             H
-# z_bar_k = [1,0]*x_bar_k + R_bar_k 
-
-# How can we go from x_bar_k to x_bar_k1
-
-# PREDICTION STEP 
-# We calculate the mean (x_bar_hat) and covariance (P)
-
-# we are using the covariance between the measured state and estimate 
-'''
-▛~~~~~~~~~~~~~~~~~~~~~~~~▜
-  Kalman Predict Equations
-▙~~~~~~~~~~~~~~~~~~~~~~~~▟
-
-x_bar_hat_k1 = F * x_bar_hat_k 
-P_k1 = F* P_k * F.T + B * variance_a^2 * B.T 
-
-'''
-
-# MEASUREMENT STEP (incorporate the knowledge of the measurement z_k into our estimate x_bar_k
+import pandas as pd
 
 
 # REFERENCE LIST -----------------------------------------------------------------------
 # CppMonk, Understanding & Code a Kalman Filter: Python and C++ 
 # (https://www.youtube.com/playlist?list=PLvKAPIGzFEr8n7WRx8RptZmC1rXeTzYtA) 
-# 
-#
+# rlabbe, Kalman-and-Bayesian-Filters-in-Python
+# (https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/)
 # LINEAR DYNAMIC SYSTEM MODEL SETUP ----------------------------------------------------
 
 class Kalman_Filter: 
@@ -105,7 +60,9 @@ class Kalman_Filter:
 
         return self.x_k
 
-# Example usage
+# DISCRETE EXAMPLE ----------------------------------------------------------------------
+
+
 F = np.array([[1, 1], [0, 1]])
 B = np.array([[0.5], [1]])
 H = np.array([[1, 0]])
@@ -130,3 +87,5 @@ print("Predicted state:\n", predicted_state)
 # Update step
 updated_state = kf.update(z)
 print("Updated state:\n", updated_state)
+
+# EXAMPLE USING PRERECORDED DATA -----------------------------------------------------------
