@@ -70,7 +70,7 @@ with open('test_data\\sample_data_weight.csv', "r") as csv_file:
 
 
 # APPLY g-h FILTER to GIVEN DATA ----------------------------------------------
-data = g_h_filter(data=weights, x_0=160., dx=1., g=6./10, h=2./3, dt=1.)
+data = low_pass_filter(data=weights, x_0=160., dx=1., g=6./10, h=2./3, dt=1.)
 
 print(weights)
 print("")
