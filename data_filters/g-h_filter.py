@@ -1,5 +1,7 @@
 # The following script is a generic g-h algorithm used for reference in future filters
-# This script is heavily influenced by the 
+# This script is heavily influenced by the textbook: 
+# 'Kalman and Bayesian Filters in Python' by Roger R Labb Jr. (2020)
+
 '''
 NOTATION [GENERAL] ------------------------------------------------------------
 'z' ----- Measurements (Sometimes literature use 'y')
@@ -9,7 +11,7 @@ NOTATION [GENERAL] ------------------------------------------------------------
 
 NOTE: x_dot denotes our state 'x' derived in respect to time
 
-NOTATION [g-h Filer] ----------------------------------------------------------
+NOTATION [g-h Filter] ---------------------------------------------------------
 'data' -- Contains the data to be filtered
 'dx' ---- The initial change rate for our state variable
 'dt' ---- The length of the time step
@@ -28,7 +30,7 @@ import numpy as np
 import csv
 
 
-def g_h_filter(data, x_0, dx, g, h, dt=1):
+def g_h_filter(data, x_0, dx, g, h, dt):
 
     x_est = x_0 #State Estimate
     results =[] # This array stores the results
@@ -48,36 +50,33 @@ def g_h_filter(data, x_0, dx, g, h, dt=1):
 
 
 # EXAMPLE ---------------------------------------------------------------------
-
 # UPLOAD DATA FROM CSV --------------------------------------------------------
-# under construction 
+time = []
+eRPM_Vel = []
+LIDAR_Vel = []
 
+with open("test_data\\summer_run_3.csv", "r") as csv_file:
+   raw_data = csv.reader(csv_file)
 
-#path = 'C:\Users\ehans\OneDrive\Documents\DARC Files\Scripts\vehicle_dynamics_playground\data_filters\test_data\sample_data_weight.csv'
+   next(raw_data)
 
-#with open(path, "r") as file:
-#   csv_reader = csv.reader(file)
-#   for row in csv_reader:
-#        print(row)
+   for line in raw_data: 
+       time.append(float(line[0]))
+       eRPM_Vel.append(float(line[1]))
+       LIDAR_Vel.append(float(line[2]))
 
-    
+# GIVEN DATA (Remove hashmarks if you want to use hard-coded data) 
+# weights = [158.0, 164.2, 160.3, 159.9, 162.1, 164.6,
+#           169.6, 167.4, 166.4, 171.0, 171.2, 172.6]
+# weights_actual = [160.0, 161.0, 162.0, 163.0, 164.0,165.0, 166.0, 167.0, 168.0, 169.0, 170.0, 171.0]
 
-# GIVEN DATA 
-weights = [158.0, 164.2, 160.3, 159.9, 162.1, 164.6,
-           169.6, 167.4, 166.4, 171.0, 171.2, 172.6]
-weights_actual = [160.0, 161.0, 162.0, 163.0, 164.0,165.0,
-                  166.0, 167.0, 168.0, 169.0, 170.0, 171.0]
 
 # APPLY g-h FILTER to GIVEN DATA ----------------------------------------------
-data = g_h_filter(data=weights, x_0=160., dx=1., g=6./10, h=2./3, dt=1.)
-
-print(weights)
-print("")
-print(data)
+data = g_h_filter(data=LIDAR_Vel, x_0=0., dx=1./10, g=1./10, h=1./20, dt=1./20)
 
 plt.style.use('classic')
 plt.grid(color ='k', linestyle='--')
-plt.plot(weights, 'o')
-plt.plot(data)
-plt.plot(weights_actual, '--')
+plt.plot(time, LIDAR_Vel,'.')
+plt.plot(time, data)
+plt.plot(time, eRPM_Vel, '-')
 plt.show()
