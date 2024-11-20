@@ -41,32 +41,3 @@ def moving_avg_filter(data, n):
 
         results.append(round(x_est,3))
     return np.array(results)
-
-
-# EXAMPLE ---------------------------------------------------------------------
-# UPLOAD DATA FROM CSV --------------------------------------------------------
-time = []
-eRPM_Vel = []
-LIDAR_Vel = []
-
-with open("test_data\\summer_run_3.csv", "r") as csv_file:
-   raw_data = csv.reader(csv_file)
-
-   next(raw_data)
-
-   for line in raw_data: 
-       time.append(float(line[0]))
-       eRPM_Vel.append(float(line[1]))
-       LIDAR_Vel.append(float(line[2]))
-
-
-# APPLY g-h FILTER to GIVEN DATA ----------------------------------------------
-data = moving_avg_filter(data=LIDAR_Vel, n=10)
-
-plt.style.use('classic')
-plt.grid(color ='k', linestyle='--')
-plt.plot(time, LIDAR_Vel, 'o')
-plt.plot(time, data)
-plt.plot(time, eRPM_Vel, '-')
-plt.show()
-print(data)
