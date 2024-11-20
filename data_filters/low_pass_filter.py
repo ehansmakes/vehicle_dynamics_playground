@@ -63,11 +63,6 @@ with open('test_data\\sample_data_weight.csv', "r") as csv_file:
        weights.append(float(line[1]))
        weights_actual.append(float(line[2]))
 
-# GIVEN DATA (Remove hashmarks if you want to use hard-coded data) 
-# weights = [158.0, 164.2, 160.3, 159.9, 162.1, 164.6,
-#           169.6, 167.4, 166.4, 171.0, 171.2, 172.6]
-# weights_actual = [160.0, 161.0, 162.0, 163.0, 164.0,165.0, 166.0, 167.0, 168.0, 169.0, 170.0, 171.0]
-
 
 # APPLY g-h FILTER to GIVEN DATA ----------------------------------------------
 data = low_pass_filter(data=weights, x_0=160., dx=1., g=6./10, h=2./3, dt=1.)

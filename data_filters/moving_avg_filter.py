@@ -17,13 +17,10 @@ NOTE: x_dot denotes our state 'x' derived in respect to time
 NOTATION [g-h Filter] ---------------------------------------------------------
 'data' -- Contains the data to be filtered
 'n' ----- The number of samples used for the moving average filter
-'x_bar' - The average over 'sample' amount of data points
 ''' 
 
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
-
 
 def moving_avg_filter(data, n):
 
