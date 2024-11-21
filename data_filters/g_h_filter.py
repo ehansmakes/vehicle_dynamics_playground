@@ -1,7 +1,6 @@
 # The following script is a generic g-h algorithm used for reference in future filters
 # This script is heavily influenced by the textbook: 
 # 'Kalman and Bayesian Filters in Python' by Roger R Labb Jr. (2020)
-
 '''
 NOTATION [GENERAL] ------------------------------------------------------------
 'z' ----- Measurements (Sometimes literature use 'y')
@@ -22,13 +21,10 @@ NOTE: "g is the scaling we use for the measurement"
       "h is the scaling for the change of meausurement" 
       
       We can consider these values as our confidence level for measured values.
-      where 1 is our highest confidence.  
+      where 1 is our highest confidence, and 0 is our lowest.  
 ''' 
 
-import matplotlib.pyplot as plt
 import numpy as np
-import csv
-
 
 def g_h_filter(data, x_0, dx, g, h, dt):
 

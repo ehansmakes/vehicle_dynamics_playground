@@ -3,8 +3,8 @@
 # 'Kalman Filter for Beginners, Part 1 - Recursive Filters & MATLAB Examples' [2023]
 # By Dr. Shane Ross
 #
-# NOTE: 
-
+# NOTE: One of the limitations of the moving_avg_filter is that each reading carries 
+# The same weighting of 1/n. 
 '''
 NOTATION [GENERAL] ------------------------------------------------------------
 'z' ----- Measurements (Sometimes literature use 'y')
@@ -19,12 +19,11 @@ NOTATION [g-h Filter] ---------------------------------------------------------
 'n' ----- The number of samples used for the moving average filter
 ''' 
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 def moving_avg_filter(data, n):
 
-    n_array = [] # Raw data array that is used to calculate average
+    n_array = [] # Raw data array that is used as the moving average window
     results =[] # This array stores the results
 
     for z in data:

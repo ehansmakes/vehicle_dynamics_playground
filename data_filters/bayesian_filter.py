@@ -2,6 +2,7 @@
 # This script is heavily influenced by the textbook: 
 # 'Kalman and Bayesian Filters in Python' by Roger R Labb Jr. (2020)
 
+#THIS FILTER DOESN'T WORK YET
 '''
 NOTATION [GENERAL] ------------------------------------------------------------
 'z' ----- Measurements (Sometimes literature use 'y')
@@ -14,14 +15,10 @@ NOTE: x_dot denotes our state 'x' derived in respect to time
 NOTATION [Bayesian Filter] ----------------------------------------------------
 'belief'   
 'data' -- Contains the data to be filtered
-
-
-NOTE: 
 ''' 
 
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
 
 def normalize(v):
     norm = np.linalg.norm(v)

@@ -1,79 +1,35 @@
-# The following script is a generic g-h algorithm used for reference in future filters
-# This script is heavily influenced by the 
+# The following script is a generic moving average filter
+# This script is heavily influenced by the lecture done by: 
+# 'Kalman Filter for Beginners, Part 1 - Recursive Filters & MATLAB Examples' [2023]
+# By Dr. Shane Ross 
+#
+# This is a first order low-pass filter
+# This filter allows low frequencies to pass and filters out high frequencies (noise)
 '''
 NOTATION [GENERAL] ------------------------------------------------------------
 'z' ----- Measurements (Sometimes literature use 'y')
 'k' ----- Time Step (For example 'z_k' will be the measurement at time step 'k')
 'x' ----- State 
 'x_0' --- Initial state estimate
+'x_est' - State estimate after passing through filter
 
 NOTE: x_dot denotes our state 'x' derived in respect to time
 
-NOTATION [Low-Pass Filter] ----------------------------------------------------
+NOTATION [g-h Filter] ---------------------------------------------------------
 'data' -- Contains the data to be filtered
-'dx' ---- The initial change rate for our state variable
-'dt' ---- The length of the time step
-'g' ----- The g-h's g scale factor
-'h' ----- The g-h's h scale factor
-
-NOTE: "g is the scaling we use for the measurement"
-      "h is the scaling for the change of meausurement" 
-      
-      We can consider these values as our confidence level for measured values.
-      where 1 is our highest confidence.  
+'alpha' - ranges from 0 to 1. Dicatates the strength of the low-pass filter. 
 ''' 
 
-import matplotlib.pyplot as plt
 import numpy as np
-import csv
 
+def low_pass_filter(data, alpha):
 
-def low_pass_filter(data, x_0, dx, g, h, dt):
-
-    x_est = x_0 #State Estimate
     results =[] # This array stores the results
+    x_est = 0 # Set the initial state estimate x_0 to 0 
 
-    for z in data: 
+    for z in data:
 
-        # PREDICTION STEP -----------------------------------------------------
-        x_pred = x_est + (dx*dt)
-        dx = dx
+        x_est = alpha * x_est + (1-alpha) * z
 
-        # UPDATE STEP ---------------------------------------------------------
-        residual = z - x_pred 
-        dx = dx + h * (residual) / dt
-        x_est = x_pred + g * residual
         results.append(round(x_est,3))
     return np.array(results)
-
-
-# EXAMPLE ---------------------------------------------------------------------
-# UPLOAD DATA FROM CSV --------------------------------------------------------
-time = []
-weights = []
-weights_actual = []
-
-with open('test_data\\sample_data_weight.csv', "r") as csv_file:
-   raw_data = csv.reader(csv_file)
-
-   next(raw_data)
-
-   for line in raw_data: 
-       time.append(float(line[0]))
-       weights.append(float(line[1]))
-       weights_actual.append(float(line[2]))
-
-
-# APPLY g-h FILTER to GIVEN DATA ----------------------------------------------
-data = low_pass_filter(data=weights, x_0=160., dx=1., g=6./10, h=2./3, dt=1.)
-
-print(weights)
-print("")
-print(data)
-
-plt.style.use('classic')
-plt.grid(color ='k', linestyle='--')
-plt.plot(time, weights,'o')
-plt.plot(time, data)
-plt.plot(time, weights_actual, '--')
-plt.show()

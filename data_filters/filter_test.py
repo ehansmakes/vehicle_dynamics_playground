@@ -1,5 +1,8 @@
 
 from moving_avg_filter import moving_avg_filter
+from low_pass_filter import low_pass_filter
+from g_h_filter import g_h_filter
+from bayesian_filter import bayesian_filter
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
@@ -29,9 +32,9 @@ LIDAR_Vel = []
 # Gear Ratio from Motor to Differential: 13:54 
 # Differential ratio: 1:2.85 
 
-eRPM_convert = (13/54) * (1/2.85) * np.pi * 0.105 / 60
+eRPM_convert = (13/54) * (1/2.85) * (np.pi * 0.105 / 60)
 
-with open("test_data\\summer_run_3.csv", "r") as csv_file:
+with open("test_data\\summer_run_2.csv", "r") as csv_file:
    raw_data = csv.reader(csv_file)
 
    next(raw_data)
@@ -43,11 +46,19 @@ with open("test_data\\summer_run_3.csv", "r") as csv_file:
        LIDAR_Vel.append(float(line[2]))
 
 # APPLY g-h FILTER to GIVEN DATA ----------------------------------------------
-data = moving_avg_filter(data=LIDAR_Vel, n=10)
 
-plt.style.use('classic')
+data1 = moving_avg_filter(data=LIDAR_Vel, n=50)
+
+data2 = low_pass_filter(data=LIDAR_Vel, alpha=.95)
+
+data3 = g_h_filter(data=LIDAR_Vel, x_0 = 0 , dx = 0.5, g = .05, h =.005, dt = 0.05)
+
+plt.style.use('bmh')
 plt.grid(color ='k', linestyle='--')
-plt.plot(time, LIDAR_Vel, 'o')
-plt.plot(time, data)
-plt.plot(time, eRPM_velocity, '-')
+plt.plot(time, LIDAR_Vel, linewidth=0.75)
+plt.plot(time, data1, label="moving_avg", linewidth=3.0)
+plt.plot(time, data2, label="low-pass", linewidth=3.0)
+plt.plot(time, data3, label="g-h filter", linewidth=3.0)
+# plt.plot(time, eRPM, '-')
+plt.legend(loc="upper left")
 plt.show()
