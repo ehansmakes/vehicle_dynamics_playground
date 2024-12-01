@@ -2,7 +2,11 @@
 from moving_avg_filter import moving_avg_filter
 from low_pass_filter import low_pass_filter
 from g_h_filter import g_h_filter
-from bayesian_filter import bayesian_filter
+from kalman_filter import kalman_filter
+
+
+
+# from bayesian_filter import bayesian_filter
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
@@ -51,14 +55,19 @@ data1 = moving_avg_filter(data=LIDAR_Vel, n=50)
 
 data2 = low_pass_filter(data=LIDAR_Vel, alpha=.95)
 
-data3 = g_h_filter(data=LIDAR_Vel, x_0 = 0 , dx = 0.5, g = .05, h =.005, dt = 0.05)
+data3 = g_h_filter(data=LIDAR_Vel, x_0 = 0 , dx = 0.2, g = .05, h =.001, dt = 0.05)
 
-plt.style.use('bmh')
+data4 = kalman_filter(data=LIDAR_Vel, process_var=0.25, sensor_var=150.0, dt = 0.05)
+
+plt.style.use('dark_background')
 plt.grid(color ='k', linestyle='--')
-plt.plot(time, LIDAR_Vel, linewidth=0.75)
-plt.plot(time, data1, label="moving_avg", linewidth=3.0)
-plt.plot(time, data2, label="low-pass", linewidth=3.0)
-plt.plot(time, data3, label="g-h filter", linewidth=3.0)
-# plt.plot(time, eRPM, '-')
+plt.plot(time, LIDAR_Vel, linewidth=0.75,alpha=0.4)
+#plt.plot(time, data1, label="moving_avg", linewidth=3.0,)
+#plt.plot(time, data2, label="low-pass", linewidth=3.0)
+#plt.plot(time, data3, label="g-h filter", linewidth=3.0)
+plt.plot(time, data4, label="kalman filter variance", linewidth=3.0, color = 'magenta')
+# plt.plot(time, eRPM, '-', label="eRPM", color = 'blue')
 plt.legend(loc="upper left")
+plt.xlabel("Time (seconds)")
+plt.ylabel("Variance (m/s)^2")
 plt.show()
