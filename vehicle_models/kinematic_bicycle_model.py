@@ -30,6 +30,7 @@ vehicle_accel = 1 # vehicle acceleration (m/s^2)
 
 # STATE PARAMETERS (OUTPUTS) ------------------------------------------------------------
 
+yaw_angle = np.deg2rad(20)
 # 
 # 
 
